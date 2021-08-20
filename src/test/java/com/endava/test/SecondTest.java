@@ -1,9 +1,6 @@
 package com.endava.test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -14,9 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.condition.EnabledIf;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -24,7 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FirstTest {
+public class SecondTest {
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -64,8 +58,11 @@ public class FirstTest {
 	@Tag( "userUsage" )
 	public void testMethod2() {
 		System.out.println( "Test Method 2" );
-		int r = 1+3;// anotherClass.getMathodWithParms
-		assertThat(r, greaterThanOrEqualTo(3));
+		int r = 2+3;// anotherClass.getMathodWithParms
+		assertThat(r).isEqualTo( 5 )
+				.isBetween( 3,5 )
+				.isPositive()
+				.isEven();
 	}
 
 	@ParameterizedTest
