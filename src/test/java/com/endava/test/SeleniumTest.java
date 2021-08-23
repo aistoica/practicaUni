@@ -14,9 +14,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.endava.env.EnvReader;
 import com.endava.models.Teacher;
 import com.endava.pageObjects.AddTeacherPopUp;
 import com.endava.pageObjects.TeachersPage;
+import com.endava.testData.TestDataGenerator;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.util.concurrent.TimeUnit;
@@ -24,13 +26,14 @@ import java.util.concurrent.TimeUnit;
 public class SeleniumTest {
 
 	private WebDriver webDriver;
+	private TestDataGenerator testDataGenerator = new TestDataGenerator();
 
 	@BeforeEach
 	public void setUpWebDriver() {
 		WebDriverManager.chromedriver().setup();
 		webDriver = new ChromeDriver();
 
-		webDriver.get( "http://localhost:4200/" );
+		webDriver.get( EnvReader.getUrl() );
 		webDriver.manage().window().fullscreen();
 	}
 
@@ -41,20 +44,66 @@ public class SeleniumTest {
 	}
 
 	@Test
-	public void test() {
+	public void shouldAddTeacher() {
 		//GIVEN
 		TeachersPage teachersPage = new TeachersPage( webDriver );
 		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
 
-		Teacher teacher = new Teacher();
-		teacher.setFirstName( "Toma" );
-		teacher.setLastName( "Caragiu" );
-		teacher.setBirthDate( "7/10/1988" );
-		teacher.setCnp( "1212315444332" );
-		teacher.setSalary( "130" );
-		teacher.setEmploymentDate( "08/20/2021" );
+		Teacher teacher = testDataGenerator.getTeacher();
 
 		//WHEN
+		addTeacherPopUp.addTeacher( teacher );
+
+		//THEN
+		assertThat("Added teacher is not in UI list", teachersPage.hasTeacherInList( teacher ), is(true) );
+	}
+
+	@Test
+	public void shouldFailToAddTeacherGivenCNPLowerThan13() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+		teacher.setCnp( testDataGenerator.getNumber( 1, 12 ) );
+
+		//WHEN
+		addTeacherPopUp.addTeacher( teacher );
+
+		//THEN
+		assertThat( addTeacherPopUp.isPopUpPresent(), is( true ) );
+		assertThat( addTeacherPopUp.getCnpError(), is("Cnp must be numeric and of size 13.") );
+	}
+
+	@Test
+	public void shouldFailToAddTeacherGivenCNPHigherThan13() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+		teacher.setCnp( testDataGenerator.getNumber( 14, 100 ) );
+
+		//WHEN
+		addTeacherPopUp.addTeacher( teacher );
+
+		//THEN
+		assertThat( addTeacherPopUp.isPopUpPresent(), is( true ) );
+		assertThat( addTeacherPopUp.getCnpError(), is("Cnp must be numeric and of size 13.") );
+	}
+
+	@Test
+	public void shouldEditTeacher() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+		addTeacherPopUp.addTeacher( teacher );
+
+		//WHEN
+		addTeacherPopUp = teachersPage.editTeacher( teacher );
+		teacher = testDataGenerator.getTeacher();
 		addTeacherPopUp.addTeacher( teacher );
 
 		//THEN

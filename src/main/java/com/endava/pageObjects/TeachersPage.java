@@ -12,6 +12,7 @@ public class TeachersPage extends BasePage {
 
 	private By addTeacherButton = By.cssSelector("div.add-teacher-container button");
 	private By teacherList = By.cssSelector( "app-teacher .teacher-details" );
+	private By editButton = By.xpath( "./parent::div//mat-icon[@mattooltip='Edit teacher']" );
 
 	public TeachersPage( WebDriver driver ) {
 		super(driver);
@@ -25,5 +26,13 @@ public class TeachersPage extends BasePage {
 	public boolean hasTeacherInList( Teacher teacher ) {
 		List<WebElement> teachers = findElements( teacherList );
 		return teachers.stream().peek( t -> System.out.println(t.getText()) ).anyMatch( t -> t.getText().trim().equals( teacher.getFirstName() + " " + teacher.getLastName() ) );
+	}
+
+	public AddTeacherPopUp editTeacher(Teacher teacher) {
+		List<WebElement> teachers = findElements( teacherList );
+		teachers.stream().peek( t -> System.out.println(t.getText()) )
+				.filter( t -> t.getText().trim().equals( teacher.getFirstName() + " " + teacher.getLastName() ))
+				.findFirst().get().findElement( editButton ).click();
+		return new AddTeacherPopUp( driver );
 	}
 }
