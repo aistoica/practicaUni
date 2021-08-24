@@ -2,6 +2,7 @@ package com.endava.pageObjects;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -9,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.paulhammant.ngwebdriver.NgWebDriver;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class BasePage {
@@ -20,7 +22,7 @@ public abstract class BasePage {
 	}
 
 	public WebElement findElement( By by ) {
-		WebDriverWait wait = new WebDriverWait( driver, 10 );
+		WebDriverWait wait = new WebDriverWait( driver, 3 );
 		WebElement element = wait.until( ExpectedConditions.visibilityOfElementLocated( by ) );
 		return element;
 	}
@@ -30,7 +32,11 @@ public abstract class BasePage {
 		ngWebDriver.waitForAngularRequestsToFinish();
 
 		WebDriverWait wait = new WebDriverWait( driver, 10 );
-		List<WebElement> elements = wait.until( ExpectedConditions.visibilityOfAllElementsLocatedBy( by ) );
-		return elements;
+		try {
+			List<WebElement> elements = wait.until( ExpectedConditions.visibilityOfAllElementsLocatedBy( by ) );
+			return elements;
+		} catch ( TimeoutException e ) {
+			return Collections.emptyList();
+		}
 	}
 }

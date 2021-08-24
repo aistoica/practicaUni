@@ -1,5 +1,6 @@
 package com.endava.testData;
 
+import com.endava.models.Subject;
 import com.endava.models.Teacher;
 import com.github.javafaker.Faker;
 
@@ -24,7 +25,19 @@ public class TestDataGenerator {
 		return teacher;
 	}
 
-	public String getNumber(int minDigits, int maxDigits) {
+	public Subject getSubject() {
+		int percent = faker.number().numberBetween( 0, 100 );
+		Subject subject = Subject.builder()
+				.name( faker.educator().course() )
+				.creditPoints( String.valueOf( faker.number().numberBetween( 1, 20 ) ) )
+				.seminaryPercent( String.valueOf( percent ) )
+				.coursePercent( String.valueOf( 100-percent ) )
+				.optional( faker.random().nextBoolean() )
+				.build();
+		return subject;
+	}
+
+	public String getNumber( int minDigits, int maxDigits ) {
 		return faker.number().digits( faker.number().numberBetween( minDigits, maxDigits ) );
 	}
 

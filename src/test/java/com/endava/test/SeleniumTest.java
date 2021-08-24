@@ -15,8 +15,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.endava.env.EnvReader;
+import com.endava.models.Subject;
 import com.endava.models.Teacher;
+import com.endava.pageObjects.AddSubjectPopUp;
 import com.endava.pageObjects.AddTeacherPopUp;
+import com.endava.pageObjects.SubjectsPage;
 import com.endava.pageObjects.TeachersPage;
 import com.endava.testData.TestDataGenerator;
 
@@ -44,6 +47,22 @@ public class SeleniumTest {
 	}
 
 	@Test
+	public void shouldAddSubject() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		SubjectsPage subjectsPage = teachersPage.goToSubjectsPage();
+		AddSubjectPopUp addSubjectPopUp = subjectsPage.goToAddSubjectScreen();
+
+		Subject subject = testDataGenerator.getSubject();
+
+		//WHEN
+		addSubjectPopUp.addSubject( subject, true );
+
+		//THEN
+		assertThat(subjectsPage.hasSubjectInList( subject ), is(true));
+	}
+
+	@Test
 	public void shouldAddTeacher() {
 		//GIVEN
 		TeachersPage teachersPage = new TeachersPage( webDriver );
@@ -55,7 +74,7 @@ public class SeleniumTest {
 		addTeacherPopUp.addTeacher( teacher );
 
 		//THEN
-		assertThat("Added teacher is not in UI list", teachersPage.hasTeacherInList( teacher ), is(true) );
+		assertThat( "Added teacher is not in UI list", teachersPage.hasTeacherInList( teacher ), is( true ) );
 	}
 
 	@Test
@@ -72,7 +91,7 @@ public class SeleniumTest {
 
 		//THEN
 		assertThat( addTeacherPopUp.isPopUpPresent(), is( true ) );
-		assertThat( addTeacherPopUp.getCnpError(), is("Cnp must be numeric and of size 13.") );
+		assertThat( addTeacherPopUp.getCnpError(), is( "Cnp must be numeric and of size 13." ) );
 	}
 
 	@Test
@@ -89,7 +108,24 @@ public class SeleniumTest {
 
 		//THEN
 		assertThat( addTeacherPopUp.isPopUpPresent(), is( true ) );
-		assertThat( addTeacherPopUp.getCnpError(), is("Cnp must be numeric and of size 13.") );
+		assertThat( addTeacherPopUp.getCnpError(), is( "Cnp must be numeric and of size 13." ) );
+	}
+
+	@Test
+	public void shouldFailToAddTeacherGivenFirstNameEmpty() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+		teacher.setFirstName( "" );
+
+		//WHEN
+		addTeacherPopUp.addTeacher( teacher );
+
+		//THEN
+		assertThat( addTeacherPopUp.isPopUpPresent(), is( true ) );
+		assertThat( addTeacherPopUp.getFirstNameColor(), is( "rgb(244, 67, 54)" ) );
 	}
 
 	@Test
@@ -107,7 +143,39 @@ public class SeleniumTest {
 		addTeacherPopUp.addTeacher( teacher );
 
 		//THEN
-		assertThat("Added teacher is not in UI list", teachersPage.hasTeacherInList( teacher ), is(true) );
+		assertThat( "Added teacher is not in UI list", teachersPage.hasTeacherInList( teacher ), is( true ) );
+	}
+
+	@Test
+	public void shouldDeleteTeacher() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+		addTeacherPopUp.addTeacher( teacher );
+
+		//WHEN
+		teachersPage.deleteTeacher( teacher );
+
+		//THEN
+		assertThat( "Added teacher is in UI list", teachersPage.hasTeacherInList( teacher ), is( false ) );
+	}
+
+	@Test
+	public void shouldNotSaveTeacherGivenCloseButtonPressed() {
+		//GIVEN
+		TeachersPage teachersPage = new TeachersPage( webDriver );
+		AddTeacherPopUp addTeacherPopUp = teachersPage.goToAddTeacherScreen();
+
+		Teacher teacher = testDataGenerator.getTeacher();
+
+		//WHEN
+		addTeacherPopUp.addTeacher( teacher, false );
+
+		//THEN
+		assertThat( addTeacherPopUp.isPopUpPresent(), is( false ) );
+		assertThat( "Added teacher is in UI list", teachersPage.hasTeacherInList( teacher ), is( false ) );
 	}
 
 	@Test
