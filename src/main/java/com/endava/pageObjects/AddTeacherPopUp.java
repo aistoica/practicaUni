@@ -42,7 +42,7 @@ public class AddTeacherPopUp extends BasePage {
 		findElement( cnpField ).clear();
 		findElement( cnpField ).sendKeys( teacher.getCnp() );
 		findElement( salaryField ).clear();
-		findElement( salaryField ).sendKeys( teacher.getSalary() );
+		findElement( salaryField ).sendKeys( teacher.getSalary().toString() );
 		findElement( employmentDateField ).sendKeys( Keys.CONTROL, "A", Keys.DELETE );
 		findElement( employmentDateField ).sendKeys( teacher.getEmploymentDate() );
 

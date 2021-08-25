@@ -20,4 +20,16 @@ public class EnvReader {
 	public static String getUrl() {
 		return properties.getProperty( "catalog.url" );
 	}
+
+	public static String getBaseUri() {
+		return properties.getProperty( "base.uri" );
+	}
+
+	public static Integer getPort() {
+		return Integer.parseInt( properties.getProperty( "port" ) );
+	}
+
+	public static String getBasePath() {
+		return properties.getProperty( "base.path" );
+	}
 }

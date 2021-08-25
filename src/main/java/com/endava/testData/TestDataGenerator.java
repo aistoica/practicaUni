@@ -12,6 +12,7 @@ public class TestDataGenerator {
 
 	private Faker faker = new Faker();
 	private DateFormat dateFormat = new SimpleDateFormat( "MM/dd/yyyy" );
+	private DateFormat apiDateFormat = new SimpleDateFormat( "yyyy-MM-dd" );
 
 	public Teacher getTeacher() {
 		Teacher teacher = new Teacher();
@@ -19,8 +20,20 @@ public class TestDataGenerator {
 		teacher.setLastName( faker.name().lastName() );
 		teacher.setBirthDate( dateFormat.format( faker.date().birthday() ) );
 		teacher.setCnp( faker.number().digits( 13 ) );
-		teacher.setSalary( String.valueOf( faker.number().randomNumber() ) );
+		teacher.setSalary( faker.number().randomNumber() );
 		teacher.setEmploymentDate( dateFormat.format( faker.date().past( 3 * 365, TimeUnit.DAYS ) ) );
+
+		return teacher;
+	}
+
+	public Teacher getTeacherAPI() {
+		Teacher teacher = new Teacher();
+		teacher.setFirstName( faker.name().firstName() );
+		teacher.setLastName( faker.name().lastName() );
+		teacher.setBirthDate( apiDateFormat.format( faker.date().birthday() ) );
+		teacher.setCnp( faker.number().digits( 13 ) );
+		teacher.setSalary( faker.number().randomNumber() );
+		teacher.setEmploymentDate( apiDateFormat.format( faker.date().past( 3 * 365, TimeUnit.DAYS ) ) );
 
 		return teacher;
 	}

@@ -13,7 +13,7 @@ public class Teacher {
 	private String lastName;
 	private String birthDate;
 	private String cnp;
-	private String salary;
+	private Long salary;
 	private String employmentDate;
 
 }
